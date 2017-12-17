@@ -1,0 +1,16 @@
+﻿@model TodoApplication.Models.TodoViewModels.CompletedViewModel
+
+<h1>Completed todos</h1>
+
+@if (!Model.TodoItems.Any())
+{
+    <h4>Nothing completed :(</h4>
+}
+
+@foreach (var todo in Model.TodoItems)
+{
+    @Html.Partial("TodoItem", todo)
+    <br />
+}
+
+<a asp-action="Index">Back</a>

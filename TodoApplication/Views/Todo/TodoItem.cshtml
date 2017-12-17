@@ -1,0 +1,28 @@
+﻿@model TodoApplication.Models.TodoViewModels.TodoViewModel
+
+<div>
+    <span style="font-size: medium">@Model.Text</span>
+    @if (Model.DateDue is null)
+    { 
+        <div>-</div>
+    }
+    else
+    {
+        if (!Model.IsCompleted)
+        {
+             <span style="color: red;">(@Model.DaysLeft)</span>
+        }
+        <div>@Model.DateDue.Value.ToString("D")</div>
+    }
+
+    <div>
+        @if (Model.IsCompleted)
+        {
+            <a asp-action="Remove" asp-route-todoId="@Model.Id">Remove from completed</a>
+        }
+        else
+        {
+            <a asp-action="MarkAsCompleted" asp-route-todoId="@Model.Id">Mark as completed</a>
+        }
+    </div>
+</div>

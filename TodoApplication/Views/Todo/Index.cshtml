@@ -1,0 +1,15 @@
+﻿@model TodoApplication.Models.TodoViewModels.IndexViewModel
+
+
+<h1>Todo</h1>
+<div>
+    <a asp-action="Add">Add new todo</a> &nbsp;
+    <a asp-action="Completed">See completed</a>
+</div>
+<hr/>
+
+@foreach (var todo in Model.TodoItems)
+{
+    @Html.Partial("TodoItem", todo)
+    <br/>
+}

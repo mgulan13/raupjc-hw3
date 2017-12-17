@@ -1,0 +1,12 @@
+﻿@model TodoApplication.Models.TodoViewModels.AddTodoViewModel
+
+<h1>Add new Todo</h1>
+<form asp-action="Add" method="post">
+    Tekst: <input asp-for="Text" /><br />
+    Krajnji rok: <input asp-for="DateDue" /><br />
+    Oznake: <textarea asp-for="Labels"></textarea> 
+    <input type="submit" class="btn btn-info" value="Add"/>
+    <span asp-validation-for="Text"></span>
+</form>
+
+<a asp-action="Index">Back</a>
