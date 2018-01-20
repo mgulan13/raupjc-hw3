@@ -18,17 +18,22 @@ namespace DataStorage
 
         public TodoItem Get(Guid todoId, Guid userId)
         {
-            var todo = _context.TodoItems.FirstOrDefault(t => t.Id == todoId);
-            if (todo != null)
+            var todo = _context.TodoItems
+                .Include(t => t.Labels)
+                .AsNoTracking()
+                .SingleOrDefault(t => t.Id == todoId);
+
+            if (todo == null)
             {
-                if (todo.UserId != userId)
-                {
-                    throw new TodoAccessDeniedException(userId: userId, todoId: todoId);
-                }
-                return todo;
+                return null;
             }
 
-            return null;
+            if (todo.UserId != userId)
+            {
+                throw new TodoAccessDeniedException(userId: userId, todoId: todoId);
+            }
+
+            return todo;
         }
 
         public void Add(TodoItem todoItem)
@@ -40,14 +45,14 @@ namespace DataStorage
         public bool Remove(Guid todoId, Guid userId)
         {
             var todo = Get(todoId, userId);
-            if (todo != null)
+            if (todo == null)
             {
-                _context.TodoItems.Remove(todo);
-                _context.SaveChanges();
-                return true;
+                return false;
             }
 
-            return false;
+            _context.TodoItems.Remove(todo);
+            _context.SaveChanges();
+            return true;
         }
 
         public void Update(TodoItem todoItem, Guid userId)
@@ -64,52 +69,40 @@ namespace DataStorage
         public bool MarkAsCompleted(Guid todoId, Guid userId)
         {
             var todo = Get(todoId, userId);
-            if (todo != null)
+            if (todo == null)
             {
-                todo.MarkAsCompleted();
-                _context.SaveChanges();
-                return true;
+                return false;
             }
-            return false;
+
+            todo.MarkAsCompleted();
+            _context.SaveChanges();
+            return true;
         }
 
         public List<TodoItem> GetAll(Guid userId)
         {
-            return _context.TodoItems.Where(t => t.UserId == userId).ToList();
+            return GetFiltered(t => true, userId);
         }
 
         public List<TodoItem> GetActive(Guid userId)
         {
-            return _context.TodoItems.Where(t => t.UserId == userId && t.IsCompleted == false).ToList();
+            return GetFiltered(t => !t.IsCompleted, userId);
         }
 
         public List<TodoItem> GetCompleted(Guid userId)
         {
-            return _context.TodoItems.Where(t => t.UserId == userId && t.IsCompleted).ToList();
+            return GetFiltered(t => t.IsCompleted, userId);
         }
 
         public List<TodoItem> GetFiltered(Func<TodoItem, bool> filterFunction, Guid userId)
         {
-            return _context.TodoItems.Where(t => t.UserId == userId).Where(filterFunction).ToList();
+            return _context.TodoItems
+                .Include(t => t.Labels)
+                .AsNoTracking()
+                .Where(t => t.UserId == userId)
+                .Where(filterFunction)
+                .ToList();
         }
 
-        public TodoItemLabel AddLabel(TodoItemLabel label)
-        {
-            TodoItemLabel existingLabel = _context.TodoLabels.FirstOrDefault(t => t.Value.Equals(label.Value));
-
-            if (existingLabel == null)
-            {
-                _context.TodoLabels.Add(label);
-                _context.SaveChanges();
-                return label;
-            }
-
-            return existingLabel;
-        }
-
-        public List<TodoItem> GetLastTodos(int n)
-        {
-            return _context.TodoItems.OrderBy(t => t.DateCreated).Take(n).ToList();
-        }
     }
 }

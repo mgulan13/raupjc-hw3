@@ -27,46 +27,18 @@ namespace DataStorage.Models
             // not for use :)
         }
 
-        public bool IsCompleted
-        {
-            get
-            {
-                return DateCompleted.HasValue;
-            }
-            private set
-            {
-                
-            }
-        }
-
-        
+        public bool IsCompleted => DateCompleted.HasValue;
 
         public bool MarkAsCompleted()
         {
-            if (!IsCompleted)
+            if (IsCompleted)
             {
-                DateCompleted = DateTime.Now;
-                return true;
+                return false;
             }
-            return false;
+            
+            DateCompleted = DateTime.Now;
+            return true;
         }
 
-        protected bool Equals(TodoItem other)
-        {
-            return Id.Equals(other.Id);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((TodoItem)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
     }
 }

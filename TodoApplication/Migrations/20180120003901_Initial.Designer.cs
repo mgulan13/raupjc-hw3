@@ -11,7 +11,7 @@ using TodoApplication.Data;
 namespace TodoApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20171217182532_Initial")]
+    [Migration("20180120003901_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

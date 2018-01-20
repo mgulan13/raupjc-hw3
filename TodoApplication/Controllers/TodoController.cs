@@ -32,7 +32,12 @@ namespace TodoApplication.Controllers
             IndexViewModel model = new IndexViewModel();
             foreach (var todo in _todoRepository.GetActive(userId))
             {
-                todos.Add(new TodoViewModel(todo.Id, todo.Text, todo.DateDue, false));
+                todos.Add(new TodoViewModel()
+                {
+                    Text = todo.Text,
+                    Date = todo.DateDue,
+                    IsCompleted = true
+                });
             }
             model.TodoItems = todos;
 
@@ -47,7 +52,12 @@ namespace TodoApplication.Controllers
             CompletedViewModel model = new CompletedViewModel();
             foreach (var todo in _todoRepository.GetCompleted(userId))
             {
-                todos.Add(new TodoViewModel(todo.Id, todo.Text, todo.DateCompleted, true));
+                todos.Add(new TodoViewModel()
+                {
+                    Text = todo.Text,
+                    Date = todo.DateCompleted,
+                    IsCompleted = true
+                });
             }
             model.TodoItems = todos;
 
@@ -78,16 +88,10 @@ namespace TodoApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                var todoItem = new TodoItem(model.Text, await GetCurrentUserId());
-                todoItem.DateDue = model.DateDue;
-                if (!String.IsNullOrWhiteSpace(model.Labels))
+                var todoItem = new TodoItem(model.Text, await GetCurrentUserId())
                 {
-                    foreach (string labelText in model.Labels.Split(','))
-                    {
-                        TodoItemLabel label = _todoRepository.AddLabel(new TodoItemLabel(labelText.Trim()));
-                        todoItem.Labels.Add(label);
-                    }
-                }
+                    DateDue = model.DateDue
+                };
 
                 _todoRepository.Add(todoItem);
 
