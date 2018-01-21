@@ -28,18 +28,19 @@ namespace TodoApplication.Controllers
         {
             var userId = await GetCurrentUserId();
 
-            var todos = new List<TodoViewModel>();
+            var todoItems = new List<TodoViewModel>();
             IndexViewModel model = new IndexViewModel();
             foreach (var todo in _todoRepository.GetActive(userId))
             {
-                todos.Add(new TodoViewModel()
+                todoItems.Add(new TodoViewModel()
                 {
+                    Id = todo.Id,
                     Text = todo.Text,
                     Date = todo.DateDue,
-                    IsCompleted = true
+                    IsCompleted = false
                 });
             }
-            model.TodoItems = todos;
+            model.TodoItems = todoItems;
 
             return View(model);
         }
@@ -54,6 +55,7 @@ namespace TodoApplication.Controllers
             {
                 todos.Add(new TodoViewModel()
                 {
+                    Id = todo.Id,
                     Text = todo.Text,
                     Date = todo.DateCompleted,
                     IsCompleted = true

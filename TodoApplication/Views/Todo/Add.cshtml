@@ -4,7 +4,6 @@
 <form asp-action="Add" method="post">
     Tekst: <input asp-for="Text" /><br />
     Krajnji rok: <input asp-for="DateDue" /><br />
-    Oznake: <textarea asp-for="Labels"></textarea> 
     <input type="submit" class="btn btn-info" value="Add"/>
     <span asp-validation-for="Text"></span>
 </form>

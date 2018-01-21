@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using DataStorage.Interfaces;
 using DataStorage.Models;
 
@@ -50,6 +51,7 @@ namespace DataStorage
                 return false;
             }
 
+            _context.Entry(todo).State = EntityState.Unchanged;
             _context.TodoItems.Remove(todo);
             _context.SaveChanges();
             return true;
@@ -74,6 +76,7 @@ namespace DataStorage
                 return false;
             }
 
+            _context.Entry(todo).State = EntityState.Unchanged;
             todo.MarkAsCompleted();
             _context.SaveChanges();
             return true;
@@ -104,5 +107,72 @@ namespace DataStorage
                 .ToList();
         }
 
+        public async Task<IList<TodoItemLabel>> GetAllLabelsAsync()
+        {
+            return await _context.TodoLabels
+                .Include(l => l.LabelTodoItems)
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public async Task<bool> AddLabelAsync(TodoItemLabel label)
+        {
+            if (await GetLabelAsync(label.Value) != null)
+            {
+                return false;
+            }
+
+            _context.TodoLabels.Add(label);
+            _context.SaveChanges();
+            return true;
+        }
+
+        public async Task<bool> RemoveLabelAsync(Guid id)
+        {
+            var label = await GetLabelAsync(id);
+            if (label == null)
+            {
+                return false;
+            }
+
+            _context.TodoLabels.Attach(label);
+            _context.TodoLabels.Remove(label);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<TodoItemLabel> GetLabelAsync(Guid id)
+        {
+            return await _context.TodoLabels
+                .Include(l => l.LabelTodoItems)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<TodoItemLabel> GetLabelAsync(string value)
+        {
+            return await _context.TodoLabels
+                .Include(l => l.LabelTodoItems)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(t => t.Value == value);
+        }
+
+        public async Task<bool> UpdateLabelAsync(TodoItemLabel label)
+        {
+            if (await GetLabelAsync(label.Value) != null)
+            {
+                return false;
+            }
+
+            Update(label);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private void Update(object entry)
+        {
+            _context.Entry(entry).State = EntityState.Modified;
+        }
     }
 }

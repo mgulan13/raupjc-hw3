@@ -2,7 +2,7 @@
 
 <div>
     <span style="font-size: medium">@Model.Text</span>
-    @if (Model.DateDue is null)
+    @if (Model.Date is null)
     { 
         <div>-</div>
     }
@@ -12,7 +12,8 @@
         {
              <span style="color: red;">(@Model.DaysLeft)</span>
         }
-        <div>@Model.DateDue.Value.ToString("D")</div>
+
+        <div>@Model.Date.Value.ToString("D")</div>
     }
 
     <div>
@@ -25,4 +26,5 @@
             <a asp-action="MarkAsCompleted" asp-route-todoId="@Model.Id">Mark as completed</a>
         }
     </div>
+
 </div>

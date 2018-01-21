@@ -8,9 +8,8 @@ namespace TodoApplication.Models.TodoViewModels
         [Required]
         public string Text { get; set; }
 
+        [Required]
         [DataType(DataType.Date)]
         public DateTime? DateDue { get; set; }
-
-        public string Labels { get; set; }
     }
 }

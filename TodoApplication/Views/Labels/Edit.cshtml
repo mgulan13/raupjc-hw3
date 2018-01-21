@@ -1,0 +1,22 @@
+﻿@model TodoApplication.Models.TodoViewModels.EditLabelViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Value"></label>
+        <input class="form-control" asp-for="Value"/>
+        <span asp-validation-for="Value" class="text-danger"></span>
+    </div>
+
+    <div>
+        <input type="submit" class="btn btn-info" value="Save"/>
+    </div>
+</form>
+
+<a asp-action="Index">Back</a>

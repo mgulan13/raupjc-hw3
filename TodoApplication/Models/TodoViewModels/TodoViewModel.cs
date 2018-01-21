@@ -4,6 +4,7 @@ namespace TodoApplication.Models.TodoViewModels
 {
     public class TodoViewModel
     {
+        public Guid Id { get; set; }
         public string Text { get; set; }
         public DateTime? Date { get; set; }
         public bool IsCompleted { get; set; }

@@ -1,0 +1,34 @@
+﻿@model IEnumerable<TodoApplication.Models.TodoViewModels.EditLabelViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Labels</h1>
+<div>
+    <a asp-action="Add">Add new label</a>
+</div>
+<hr/>
+
+<table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th>Label</th>
+        <th></th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    @foreach (var label in Model)
+    {
+        <tr>
+            <td>@label.Value</td>
+            <td>
+                <a class="btn btn-success" asp-action="Edit" asp-route-id="@label.Id">Edit</a>
+                <a class="btn btn-danger" asp-action="Remove" asp-route-id="@label.Id">Remove</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DataStorage.Models;
 
 namespace DataStorage.Interfaces
@@ -15,5 +16,11 @@ namespace DataStorage.Interfaces
         List<TodoItem> GetActive(Guid userId);
         List<TodoItem> GetCompleted(Guid userId);
         List<TodoItem> GetFiltered(Func<TodoItem, bool> filterFunction, Guid userId);
+        Task<IList<TodoItemLabel>> GetAllLabelsAsync();
+        Task<bool> AddLabelAsync(TodoItemLabel label);
+        Task<bool> RemoveLabelAsync(Guid id);
+        Task<bool> UpdateLabelAsync(TodoItemLabel label);
+        Task<TodoItemLabel> GetLabelAsync(Guid id);
+        Task<TodoItemLabel> GetLabelAsync(string value);
     }
 }
