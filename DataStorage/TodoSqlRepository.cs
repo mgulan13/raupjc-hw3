@@ -39,6 +39,11 @@ namespace DataStorage
 
         public void Add(TodoItem todoItem)
         {
+            foreach (var label in todoItem.Labels)
+            {
+                _context.TodoLabels.Attach(label);
+            }
+
             _context.TodoItems.Add(todoItem);
             _context.SaveChanges();
         }
@@ -107,7 +112,7 @@ namespace DataStorage
                 .ToList();
         }
 
-        public async Task<IList<TodoItemLabel>> GetAllLabelsAsync()
+        public async Task<List<TodoItemLabel>> GetAllLabelsAsync()
         {
             return await _context.TodoLabels
                 .Include(l => l.LabelTodoItems)

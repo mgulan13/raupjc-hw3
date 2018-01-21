@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using DataStorage.Models;
 
 namespace TodoApplication.Models.TodoViewModels
 {
@@ -8,8 +10,9 @@ namespace TodoApplication.Models.TodoViewModels
         [Required]
         public string Text { get; set; }
 
-        [Required]
         [DataType(DataType.Date)]
         public DateTime? DateDue { get; set; }
+
+        public Guid[] Labels { get; set; }
     }
 }

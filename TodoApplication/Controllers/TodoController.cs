@@ -6,6 +6,7 @@ using DataStorage.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TodoApplication.Models;
 using TodoApplication.Models.TodoViewModels;
 
@@ -80,19 +81,31 @@ namespace TodoApplication.Controllers
             return RedirectToAction("Completed");
         }
 
-        public IActionResult Add()
+        public async  Task<IActionResult> Add()
         {
+            ViewBag.Labels = new MultiSelectList(await _todoRepository.GetAllLabelsAsync(), "Id", "Value");
+            
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Add(AddTodoViewModel model)
+
         {
             if (ModelState.IsValid)
             {
+                var labels = new List<TodoItemLabel>();
+                if (model.Labels != null)
+                {
+                    foreach (var label in model.Labels)
+                    {
+                        labels.Add(await _todoRepository.GetLabelAsync(label));
+                    }
+                }
                 var todoItem = new TodoItem(model.Text, await GetCurrentUserId())
                 {
-                    DateDue = model.DateDue
+                    DateDue = model.DateDue,
+                    Labels = labels
                 };
 
                 _todoRepository.Add(todoItem);

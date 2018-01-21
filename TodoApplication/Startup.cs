@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using TodoApplication.Data;
 using TodoApplication.Models;
 using TodoApplication.Services;
@@ -17,6 +19,14 @@ namespace TodoApplication
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Error()
+                .Enrich.FromLogContext()
+                .WriteTo.MSSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    "ErrorLogs",
+                    autoCreateSqlTable: true).CreateLogger();
         }
 
         public IConfiguration Configuration { get; }
@@ -42,7 +52,7 @@ namespace TodoApplication
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -55,6 +65,8 @@ namespace TodoApplication
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            loggerFactory.AddSerilog();
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
@@ -62,8 +74,8 @@ namespace TodoApplication
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
